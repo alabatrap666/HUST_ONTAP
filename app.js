@@ -1,12 +1,62 @@
+let questionBank = []; // Khởi tạo mảng rỗng chờ nạp dữ liệu
+let currentMode = 'immediate';
+let userAnswers = {};
+let stats = { attempted: 0, correct: 0, wrong: 0 };
+
 const container = document.getElementById('quizContainer');
 const modeSelect = document.getElementById('modeSelect');
 const submitBtn = document.getElementById('submitBtn');
 const navGrid = document.getElementById('navGrid');
 
-// Biến theo dõi thống kê
-let currentMode = 'immediate';
-let userAnswers = {};
-let stats = { attempted: 0, correct: 0, wrong: 0 };
+// --- CÁC HÀM XỬ LÝ KHU VỰC NẠP DỮ LIỆU (PHẦN BẠN BỊ THIẾU) ---
+
+function copyPrompt() {
+    const promptText = document.getElementById("promptTemplate");
+    promptText.select();
+    document.execCommand("copy");
+    alert("Đã copy Prompt! Hãy sang AI dán và yêu cầu tạo đề.");
+}
+
+function startQuizFromInput() {
+    let rawData = document.getElementById('jsonInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+    
+    if(!rawData.trim()) {
+        errorMsg.innerText = "Lỗi: Bạn chưa dán dữ liệu JSON vào ô trống!";
+        errorMsg.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        // Màng lọc tự động cắt bỏ rác markdown từ AI
+        let cleanedData = rawData.replace(/```json/gi, '').replace(/```/g, '').trim();
+        
+        const firstBracket = cleanedData.indexOf('[');
+        const lastBracket = cleanedData.lastIndexOf(']');
+        
+        if(firstBracket !== -1 && lastBracket !== -1) {
+            cleanedData = cleanedData.substring(firstBracket, lastBracket + 1);
+        }
+
+        questionBank = JSON.parse(cleanedData);
+
+        if(!Array.isArray(questionBank) || questionBank.length === 0) {
+            throw new Error("Dữ liệu không phải là một mảng hợp lệ.");
+        }
+
+        errorMsg.classList.add('hidden');
+        document.getElementById('setupBox').classList.add('hidden');
+        document.getElementById('quizApp').classList.remove('hidden');
+        
+        initApp();
+
+    } catch (e) {
+        errorMsg.innerText = "Lỗi định dạng JSON: " + e.message;
+        errorMsg.classList.remove('hidden');
+    }
+}
+
+// --- CÁC HÀM XỬ LÝ TRẮC NGHIỆM ---
 
 function initApp() {
     renderQuiz();
@@ -20,7 +70,6 @@ function renderQuiz() {
     stats = { attempted: 0, correct: 0, wrong: 0 };
     
     questionBank.forEach((q, index) => {
-        // 1. Tạo phần tử Đề thi
         const questionHTML = `
             <div class="border border-gray-200 p-4 rounded-md bg-white shadow-sm" id="q-block-${q.id}">
                 <div class="font-bold mb-3 text-lg">Câu ${index + 1}: ${q.question}</div>
@@ -39,7 +88,6 @@ function renderQuiz() {
         `;
         container.innerHTML += questionHTML;
 
-        // 2. Tạo phần tử Điều hướng (Ô vuông)
         navGrid.innerHTML += `
             <button id="nav-btn-${q.id}" onclick="document.getElementById('q-block-${q.id}').scrollIntoView({behavior: 'smooth', block: 'center'})" 
                 class="w-10 h-10 flex items-center justify-center font-bold text-gray-600 bg-gray-200 rounded hover:bg-gray-300 transition">
@@ -65,7 +113,7 @@ function renderMath() {
 modeSelect.addEventListener('change', (e) => {
     currentMode = e.target.value;
     renderQuiz();
-    renderMath(); // Render lại công thức khi reset
+    renderMath(); 
 });
 
 function updateUIByMode() {
@@ -88,7 +136,7 @@ function updateStatsDisplay() {
 
 window.handleSelect = function(qId, selectedKey, correctKey) {
     if (!userAnswers[qId]) {
-        stats.attempted++; // Tăng biến đếm số câu đã làm nếu là lần chọn đầu tiên
+        stats.attempted++; 
     }
     userAnswers[qId] = selectedKey;
     
@@ -117,7 +165,6 @@ window.handleSelect = function(qId, selectedKey, correctKey) {
             stats.wrong++;
         }
     } else {
-        // Chế độ kiểm tra: Chỉ tô màu xanh lơ để biết là đã chọn
         selectedLabel.classList.add('bg-blue-100', 'border-blue-400');
         navBtn.classList.add('bg-blue-500', 'text-white');
         navBtn.classList.remove('bg-gray-200', 'text-gray-600');
@@ -154,12 +201,11 @@ submitBtn.addEventListener('click', () => {
             if(!selected) {
                 navBtn.classList.replace('bg-gray-200', 'bg-red-500');
                 navBtn.classList.add('text-white');
-                stats.wrong++; // Bỏ trống tính là sai
+                stats.wrong++; 
             }
         }
     });
 
-    // Mở khóa các ô thống kê đúng/sai
     document.getElementById('statCorrect').parentElement.classList.remove('hidden');
     document.getElementById('statWrong').parentElement.classList.remove('hidden');
     updateStatsDisplay();
@@ -167,6 +213,3 @@ submitBtn.addEventListener('click', () => {
     alert(`Bạn làm đúng ${stats.correct} / ${questionBank.length} câu.`);
     submitBtn.classList.add('hidden'); 
 });
-
-// Chạy hàm khởi tạo an toàn sau khi DOM tải xong
-window.addEventListener('load', initApp);
