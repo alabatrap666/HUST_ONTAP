@@ -8,24 +8,57 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .signature { font-family: 'Dancing Script', cursive; font-size: 16px; }
+        /* Tùy chỉnh thanh cuộn cho bảng điều hướng nếu quá dài */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans p-6">
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Hệ Thống Trắc Nghiệm</h1>
+<body class="bg-gray-100 text-gray-800 font-sans p-6 min-h-screen relative">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 mb-12">
         
-        <div class="flex justify-between items-center mb-6 border-b pb-4">
-            <div>
-                <label class="font-semibold mr-2">Chế độ hiển thị:</label>
-                <select id="modeSelect" class="border p-2 rounded">
-                    <option value="immediate">Luyện tập (Báo kết quả ngay)</option>
-                    <option value="deferred">Kiểm tra (Làm xong mới báo)</option>
-                </select>
+        <div class="flex-1 bg-white p-8 rounded-lg shadow-md h-fit">
+            <h1 class="text-2xl font-bold text-center text-blue-600 mb-6 border-b pb-4">Hệ Thống Trắc Nghiệm</h1>
+            
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <label class="font-semibold mr-2">Chế độ hiển thị:</label>
+                    <select id="modeSelect" class="border p-2 rounded outline-none focus:border-blue-500">
+                        <option value="immediate">Luyện tập (Báo kết quả ngay)</option>
+                        <option value="deferred">Kiểm tra (Làm xong mới báo)</option>
+                    </select>
+                </div>
             </div>
-            <button id="submitBtn" class="hidden bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold">Nộp Bài</button>
+
+            <div id="quizContainer" class="space-y-8">
+                </div>
         </div>
 
-        <div id="quizContainer" class="space-y-8">
+        <div class="w-full md:w-80 bg-white p-6 rounded-lg shadow-md h-fit sticky top-6">
+            <div class="bg-red-500 text-white font-bold px-4 py-2 rounded-t-md flex items-center gap-2 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 3.323V3a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Điều hướng câu hỏi
             </div>
+            
+            <div id="navGrid" class="flex flex-wrap gap-2 max-h-60 overflow-y-auto custom-scrollbar mb-4">
+                </div>
+            
+            <div id="statsBox" class="border-t pt-4 text-sm font-semibold space-y-2">
+                <div class="flex justify-between"><span>Đã làm:</span> <span id="statAttempted" class="text-blue-600">0/0</span></div>
+                <div class="flex justify-between"><span>Đúng:</span> <span id="statCorrect" class="text-green-600">0</span></div>
+                <div class="flex justify-between"><span>Sai:</span> <span id="statWrong" class="text-red-600">0</span></div>
+            </div>
+
+            <button id="submitBtn" class="hidden w-full mt-6 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 font-bold transition">Nộp Bài Kết Thúc</button>
+        </div>
+    </div>
+
+    <div class="fixed bottom-2 right-4 signature text-gray-400 select-none z-50">
+        thực hiện bởi toàn đầu tuổi 20
     </div>
 
     <script src="data.js"></script>
