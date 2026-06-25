@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngân Hàng Đề Thi Local</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Hệ Thống Trắc Nghiệm</h1>
+        
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <div>
+                <label class="font-semibold mr-2">Chế độ hiển thị:</label>
+                <select id="modeSelect" class="border p-2 rounded">
+                    <option value="immediate">Luyện tập (Báo kết quả ngay)</option>
+                    <option value="deferred">Kiểm tra (Làm xong mới báo)</option>
+                </select>
+            </div>
+            <button id="submitBtn" class="hidden bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold">Nộp Bài</button>
+        </div>
+
+        <div id="quizContainer" class="space-y-8">
+            </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
